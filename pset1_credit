@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <cs50.h>
+#include <math.h>
+
+int main(void)
+{
+    // Ask for credit card number
+
+    long long cc_number = 0;
+
+    while (cc_number == 0)
+    {
+        cc_number = get_long_long("Please give me your credit card number: ");
+    }
+
+    // Make a copy of the card number to be used and modified throughout the process.
+
+    long long temporary_number = cc_number;
+
+    // Count the number of digits in the credit card number
+
+    int count = 0;
+
+    while (temporary_number > 0)
+    {
+        temporary_number = temporary_number / 10;
+        count++;
+    }
+
+    // If the variable 'count' does not have either 13, 15 or 16 digits, declare the number as invalid.
+
+    if (count != 13 && count != 15 && count != 16)
+    {
+        printf("This is an invalid number (# of digits).\n");
+        return 1;
+    }
+
+    // Reset value of variable 'temporary_number' to the 'cc_number' variable
+    temporary_number = cc_number;
+    
+    // Get the first two digits of variable 'temporary_number'
+    while (temporary_number > 100LL)
+    {
+        temporary_number = temporary_number / 10LL;
+    }
+    
+    // Store the results in a variable 'company_id'
+    int company_id = temporary_number;
+
+    // Print the type of credit card depending on the company ID and amount of digits
+
+    if (company_id > 50 && company_id < 56 && count == 16)
+    {
+        printf("MasterCard\n") ;
+    }
+    else if ((company_id == 34 || company_id == 37) && (count == 15)) 
+    {
+        printf("American Express\n") ;
+    }
+    else if ((company_id / 10 == 4) && (count == 13 || count == 16 || count == 19))
+    {
+        printf("VISA\n") ;
+    }
+    else
+    {
+        printf("Unknown card type.\n");
+    }
+
+    // Apply Luhn's algorithm.
+
+    int sum = 0;
+    
+    // Reset value of variable 'temporary_number' to the 'cc_number' variable
+    temporary_number = cc_number;
+
+    for (int i = 1; i <= count; i++)
+    {
+        int digit = temporary_number % 10;
+
+        if (i % 2 == 0)
+        {
+            digit *= 2;
+
+            if (digit > 9)
+            {
+                digit -= 9;
+            }
+        }
+
+        sum += digit;
+
+        temporary_number /= 10;
+    }
+
+    // Checking the validity of the number according to Luhn's algorithm
+
+    if (sum % 10 != 0)
+    {
+        printf("This is an invalid number\n");
+        return 1; 
+    }
+
+    printf("This is a valid number\n");
+
+    return 0;
+}
